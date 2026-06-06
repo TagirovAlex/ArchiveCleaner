@@ -1,1 +1,0 @@
-cl /EHsc /std:c++17 main.cpp /Fe:ArchiveCleaner.exe
