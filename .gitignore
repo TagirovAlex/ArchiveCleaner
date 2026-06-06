@@ -10,3 +10,4 @@
 *.ps1
 compile.txt
 cleaner.ps1
+.gitattributes
