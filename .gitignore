@@ -1,0 +1,11 @@
+*.exe
+*.obj
+*.tlog
+*.pdb
+*.recipe
+*.ilk
+*.user
+*.suo
+.vs/
+*.ps1
+compile.txt
