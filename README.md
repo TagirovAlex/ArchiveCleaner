@@ -21,10 +21,18 @@
 
 ## Сборка проекта
 
-На Windows (через MSVC Developer Command Prompt):
+### Через CMake (рекомендуется)
 ```
-cl /EHsc /std:c++17 /utf-8 main.cpp Mailer.cpp /Fe:ArchiveCleaner.exe
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
 ```
+
+### Вручную (MSVC Developer Command Prompt)
+```
+cl /nologo /EHsc /std:c++17 /DWIN32_LEAN_AND_MEAN /D_WIN32_WINNT=0x0601 /DNOMINMAX src\main.cpp src\Config.cpp src\Mailer.cpp ws2_32.lib /Fe:ArchiveCleaner.exe
+```
+
+Готовый бинарник появится в корне проекта.
 
 ## Конфигурация
 
@@ -46,6 +54,10 @@ SenderName = Archive Cleaner Service
 SenderEmail = archive@company.local
 Recipients = admin@company.local
 TemplatePath = report_template.html
+
+[Log]
+LogPath = Logs
+MaxLogs = 30
 ```
 
 Для обратной совместимости поддерживаются файлы `folders.txt` (список папок) и `email_config.txt` (настройки SMTP), но рекомендуется использовать единый `config.ini`.
@@ -79,7 +91,11 @@ HTML-шаблон письма с плейсхолдерами:
 
 ## Логирование
 
-Каждый запуск создает новый лог-файл с именем вида `log_YYYYMMDD_HHMMSS.txt`. В логах отображаются:
+Лог-файлы сохраняются в папку `Logs\` (настраивается в `[Log]` → `LogPath`, относительно exe или абсолютный путь).
+
+Каждый запуск создаёт новый файл `log_YYYYMMDD_HHMMSS.txt`. При старте программа автоматически удаляет самые старые логи, оставляя не более `MaxLogs` штук (по умолчанию 30). Отключить очистку: `MaxLogs = 0`.
+
+В логах отображаются:
 - Успешные операции удаления каждого файла.
 - Уведомления о файлах, которые были оставлены (KEEP).
 - Подробные сообщения об ошибках, если папка недоступна или файл заблокирован.

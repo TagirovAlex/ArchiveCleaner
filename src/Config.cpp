@@ -141,6 +141,18 @@ std::vector<std::string> Config::recipients() const {
     return result;
 }
 
+std::string Config::logPath() const {
+    std::string path = get("Log", "LogPath", "Logs");
+    if (!path.empty() && path.find_first_of("\\/") == std::string::npos) {
+        path = executableDir() + "\\" + path;
+    }
+    return path;
+}
+
+int Config::maxLogs() const {
+    return getInt("Log", "MaxLogs", 30);
+}
+
 std::string Config::templatePath() const {
     std::string tpl = get("Mail", "TemplatePath", "report_template.html");
     if (!tpl.empty() && tpl.find_first_of("\\/") == std::string::npos) {

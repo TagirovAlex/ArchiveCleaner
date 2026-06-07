@@ -26,3 +26,9 @@ SenderEmail = archive@company.local
 Recipients = admin@company.local
 ; Путь к файлу шаблона письма (HTML)
 TemplatePath = report_template.html
+
+[Log]
+; Путь к папке логов (пусто — рядом с exe)
+LogPath = Logs
+; Сколько последних логов хранить (старые удаляются при запуске)
+MaxLogs = 30

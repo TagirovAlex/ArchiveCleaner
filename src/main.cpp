@@ -214,15 +214,39 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // Logging
-    std::string logFileName = "log_" + GetCurrentTimestamp() + ".txt";
+    // Logging directory setup
+    std::string logDir = config.logPath();
+    if (logDir.empty()) logDir = Config::executableDir() + "\\Logs";
+    fs::create_directories(logDir);
+
+    // Clean old logs beyond maxLogs
+    int maxLogs = config.maxLogs();
+    if (maxLogs > 0) {
+        std::vector<fs::path> existingLogs;
+        try {
+            for (const auto& entry : fs::directory_iterator(logDir)) {
+                if (entry.is_regular_file() && entry.path().extension() == ".txt") {
+                    existingLogs.push_back(entry.path());
+                }
+            }
+            std::sort(existingLogs.begin(), existingLogs.end(),
+                [](const fs::path& a, const fs::path& b) {
+                    return fs::last_write_time(a) > fs::last_write_time(b);
+                });
+            for (size_t i = maxLogs; i < existingLogs.size(); ++i) {
+                fs::remove(existingLogs[i]);
+            }
+        } catch (...) {}
+    }
+
+    std::string logFileName = logDir + "\\log_" + GetCurrentTimestamp() + ".txt";
     std::ofstream logFile(logFileName);
     if (!logFile.is_open()) {
         std::cerr << "Could not create log file!" << std::endl;
         return 1;
     }
 
-    std::string debugLogName = "debug_delete_list.txt";
+    std::string debugLogName = logDir + "\\debug_delete_list.txt";
     std::ofstream debugFile;
     if (debugMode) {
         debugFile.open(debugLogName);

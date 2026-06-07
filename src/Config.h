@@ -18,6 +18,8 @@ public:
     std::string senderEmail() const;
     std::vector<std::string> recipients() const;
     std::string templatePath() const;
+    std::string logPath() const;
+    int maxLogs() const;
 
     static std::string executableDir();
 
