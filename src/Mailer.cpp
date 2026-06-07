@@ -136,6 +136,7 @@ std::string Mailer::base64Encode(const std::string& input) {
     size_t i = 0;
     const unsigned char* data = reinterpret_cast<const unsigned char*>(input.c_str());
     size_t len = input.length();
+    size_t col = 0;
 
     while (i < len) {
         unsigned char a = (i < len) ? data[i++] : 0;
@@ -146,6 +147,12 @@ std::string Mailer::base64Encode(const std::string& input) {
         result += b64[((a & 0x03) << 4) | (b >> 4)];
         result += (i - 1 < len) ? b64[((b & 0x0F) << 2) | (c >> 6)] : '=';
         result += (i - 2 < len) ? b64[c & 0x3F] : '=';
+
+        col += 4;
+        if (col >= 76 && i < len) {
+            result += "\r\n";
+            col = 0;
+        }
     }
 
     return result;
@@ -178,9 +185,27 @@ bool Mailer::sendMail(
     if (m_socket == INVALID_SOCKET) return false;
     if (recipients.empty()) return false;
 
-    if (!sendCommand("EHLO ArchiveCleaner\r\n", "250")) {
+    // EHLO to discover server capabilities
+    std::string ehloResponse;
+    bool have8bitMime = false;
+    if (!sendCommand("EHLO ArchiveCleaner\r\n", "250", &ehloResponse)) {
         if (!sendCommand("HELO ArchiveCleaner\r\n", "250")) {
             return false;
+        }
+    } else {
+        // Parse EHLO response for 8BITMIME support
+        size_t pos = 0;
+        while (true) {
+            size_t nl = ehloResponse.find("\r\n", pos);
+            std::string line = (nl != std::string::npos)
+                ? ehloResponse.substr(pos, nl - pos)
+                : ehloResponse.substr(pos);
+            if (line.find("8BITMIME") != std::string::npos) {
+                have8bitMime = true;
+                break;
+            }
+            if (nl == std::string::npos) break;
+            pos = nl + 2;
         }
     }
 
@@ -228,13 +253,26 @@ bool Mailer::sendMail(
         msg << recipients[i];
     }
     msg << "\r\n";
-    msg << "Subject: " << subject << "\r\n";
+    // Encode subject with UTF-8 Base64 if needed
+    if (needsEncoding(subject)) {
+        msg << "Subject: =?utf-8?B?" << base64Encode(subject) << "?=\r\n";
+    } else {
+        msg << "Subject: " << subject << "\r\n";
+    }
     msg << "Message-ID: " << messageId << "\r\n";
     msg << "MIME-Version: 1.0\r\n";
     msg << "Content-Type: text/html; charset=\"utf-8\"\r\n";
-    msg << "Content-Transfer-Encoding: 8bit\r\n";
-    msg << "\r\n";
-    msg << htmlBody << "\r\n";
+
+    if (have8bitMime) {
+        msg << "Content-Transfer-Encoding: 8bit\r\n";
+        msg << "\r\n";
+        msg << htmlBody << "\r\n";
+    } else {
+        // Server doesn't support 8BITMIME → encode body with base64
+        msg << "Content-Transfer-Encoding: base64\r\n";
+        msg << "\r\n";
+        msg << base64Encode(htmlBody) << "\r\n";
+    }
     msg << ".\r\n";
 
     if (!sendCommand(msg.str(), "250")) return false;

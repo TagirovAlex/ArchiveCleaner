@@ -29,7 +29,7 @@ cmake --build build --config Release
 
 ### Вручную (MSVC Developer Command Prompt)
 ```
-cl /nologo /EHsc /std:c++17 /DWIN32_LEAN_AND_MEAN /D_WIN32_WINNT=0x0601 /DNOMINMAX src\main.cpp src\Config.cpp src\Mailer.cpp ws2_32.lib /Fe:ArchiveCleaner.exe
+cl /nologo /EHsc /std:c++17 /utf-8 /DWIN32_LEAN_AND_MEAN /D_WIN32_WINNT=0x0601 /DNOMINMAX src\main.cpp src\Config.cpp src\Mailer.cpp ws2_32.lib /Fe:ArchiveCleaner.exe
 ```
 
 Готовый бинарник появится в корне проекта.
