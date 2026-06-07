@@ -27,6 +27,7 @@ public:
         const std::string& password = ""
     );
     void disconnect();
+    std::string lastResponse() const { return m_lastResponse; }
 
 private:
     bool readResponse(std::string& response);
@@ -37,4 +38,5 @@ private:
     SOCKET m_socket = INVALID_SOCKET;
     std::string m_server;
     int m_port = 0;
+    std::string m_lastResponse;
 };

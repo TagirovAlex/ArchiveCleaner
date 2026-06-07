@@ -355,7 +355,8 @@ int main(int argc, char* argv[]) {
             bool mailOk = true;
 
             if (!mailer.connect(mailServer, config.mailPort())) {
-                logFile << "[ERROR] Failed to connect to mail server: " << mailServer << std::endl;
+                logFile << "[ERROR] Failed to connect to mail server: " << mailServer << ":" << config.mailPort() << std::endl;
+                logFile << "[ERROR] Server response: " << mailer.lastResponse() << std::endl;
                 mailOk = false;
             } else {
                 if (!mailer.sendMail(
@@ -364,6 +365,7 @@ int main(int argc, char* argv[]) {
                     config.mailAuth(), config.mailUsername(), config.mailPassword()
                 )) {
                     logFile << "[ERROR] Failed to send email" << std::endl;
+                    logFile << "[ERROR] Server response: " << mailer.lastResponse() << std::endl;
                     mailOk = false;
                 }
                 mailer.disconnect();

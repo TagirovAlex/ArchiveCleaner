@@ -104,16 +104,24 @@ bool Mailer::readResponse(std::string& response) {
 
 bool Mailer::sendCommand(const std::string& cmd, const std::string& expectedCode, std::string* outResponse) {
     if (send(m_socket, cmd.c_str(), static_cast<int>(cmd.length()), 0) == SOCKET_ERROR) {
+        m_lastResponse = "SOCKET_ERROR on send";
         return false;
     }
 
     std::string response;
-    if (!readResponse(response)) return false;
+    if (!readResponse(response)) {
+        m_lastResponse = "recv timeout or connection closed";
+        return false;
+    }
 
+    m_lastResponse = response;
     if (outResponse) *outResponse = response;
 
     if (!expectedCode.empty()) {
-        if (response.size() < 3) return false;
+        if (response.size() < 3) {
+            m_lastResponse = "Malformed response: " + response;
+            return false;
+        }
         return response.substr(0, 3) == expectedCode;
     }
 
@@ -171,7 +179,9 @@ bool Mailer::sendMail(
     if (recipients.empty()) return false;
 
     if (!sendCommand("EHLO ArchiveCleaner\r\n", "250")) {
-        sendCommand("HELO ArchiveCleaner\r\n", "250");
+        if (!sendCommand("HELO ArchiveCleaner\r\n", "250")) {
+            return false;
+        }
     }
 
     if (useAuth) {
