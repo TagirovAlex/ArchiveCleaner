@@ -1,74 +1,96 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>ArchiveCleaner Report</title>
+<meta charset="utf-8">
+<style>
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #333;
+    padding: 20px;
+    margin: 0;
+}
+.container {
+    border-collapse: collapse;
+    width: 640px;
+    max-width: 100%;
+}
+h2 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+    color: #0078d4;
+}
+.status {
+    font-size: 13px;
+    margin: 0 0 4px 0;
+}
+.data-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 14px;
+}
+.data-table td, .data-table th {
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+    font-size: 12px;
+}
+.data-table th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    white-space: nowrap;
+    width: 200px;
+}
+.footer {
+    margin-top: 14px;
+    font-size: 11px;
+    color: #888;
+}
+.records-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+.records-table td, .records-table th {
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 12px;
+}
+.records-table th {
+    background-color: #0078d4;
+    color: #fff;
+    font-weight: 600;
+}
+.records-table tr:nth-child(even) td {
+    background-color: #f9f9f9;
+}
+</style>
 </head>
-<body style="margin:0;padding:0;background-color:#f4f4f4;font-family:'Segoe UI',Arial,sans-serif;">
-<table width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4;padding:20px 0;">
-<tr>
-<td align="center">
-<table width="640" border="0" cellpadding="0" cellspacing="0" style="border:1px solid #dddddd;background-color:#ffffff;">
+<body>
+<table class="container" cellpadding="0" cellspacing="0">
+<tr><td>
+<h2>ArchiveCleaner &mdash; отчёт об обработке</h2>
+<p class="status">Дата запуска: <b>{TIMESTAMP}</b></p>
+<p class="status">Режим: <b>{MODE}</b></p>
+<p class="status">Удалено файлов: <b>{TOTAL_DELETED}</b></p>
+<br>
 
-<!-- HEADER -->
-<tr>
-<td style="background-color:#0078d4;padding:20px;text-align:center;font-size:22px;color:#ffffff;font-family:'Segoe UI',Arial,sans-serif;">
-ArchiveCleaner &mdash; отчет об обработке
-</td>
-</tr>
-
-<!-- INFO -->
-<tr>
-<td style="padding:20px 20px 10px 20px;font-size:13px;color:#333333;font-family:'Segoe UI',Arial,sans-serif;">
-<p style="margin:0 0 5px 0;">Дата запуска: <strong>{{TIMESTAMP}}</strong></p>
-<p style="margin:0 0 5px 0;">Режим: <strong>{{MODE}}</strong></p>
-<p style="margin:0 0 5px 0;">Всего удалено файлов: <strong>{{TOTAL_DELETED}}</strong></p>
-</td>
-</tr>
-
-<!-- TABLE -->
-<tr>
-<td style="padding:10px 20px;">
-<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:12px;font-family:'Segoe UI',Arial,sans-serif;">
+<table class="records-table" cellpadding="0" cellspacing="0">
 <thead>
-<tr style="background-color:#0078d4;color:#ffffff;">
-<th style="padding:8px;border:1px solid #0078d4;text-align:left;width:50%;">Папка</th>
-<th style="padding:8px;border:1px solid #0078d4;text-align:left;width:50%;">Удаленный файл</th>
-</tr>
+<tr><th>Папка</th><th>Удалённый файл</th></tr>
 </thead>
 <tbody>
-{{TABLE_ROWS}}
+{TABLE_ROWS}
 </tbody>
 </table>
-</td>
-</tr>
 
-<!-- SUMMARY -->
-<tr>
-<td style="padding:20px;">
-<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:12px;font-family:'Segoe UI',Arial,sans-serif;">
-<tr style="background-color:#f0f0f0;">
-<td colspan="2" style="padding:8px;border:1px solid #dddddd;font-weight:bold;font-size:14px;">Сводка</td>
-</tr>
-<tr>
-<td style="padding:6px 8px;border:1px solid #dddddd;width:50%;">Время выполнения</td>
-<td style="padding:6px 8px;border:1px solid #dddddd;width:50%;">{{DURATION}}</td>
-</tr>
-{{DRIVE_SPACE_ROWS}}
+<table class="data-table" cellpadding="0" cellspacing="0">
+<tr><th>Время выполнения</th><td>{DURATION}</td></tr>
+{DRIVE_SPACE_ROWS}
 </table>
-</td>
-</tr>
 
-<!-- FOOTER -->
-<tr>
-<td style="background-color:#f0f0f0;padding:12px;text-align:center;font-size:11px;color:#888888;font-family:'Segoe UI',Arial,sans-serif;">
-ArchiveCleaner &mdash; автоматический отчет
-</td>
-</tr>
-
-</table>
-</td>
-</tr>
+<p class="footer">Данное сообщение сгенерировано автоматически утилитой ArchiveCleaner</p>
+</td></tr>
 </table>
 </body>
 </html>
