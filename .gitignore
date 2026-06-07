@@ -8,6 +8,8 @@
 *.suo
 .vs/
 *.ps1
+config.ini
+report_[0-9]*.html
 compile.txt
 cleaner.ps1
 .gitattributes

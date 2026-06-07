@@ -1,0 +1,28 @@
+; ArchiveCleaner — пример конфигурационного файла
+; Скопируйте в config.ini и заполните свои данные
+
+[General]
+; Папки для обработки (через запятую, точку с запятой, или каждую на новой строке)
+Folders = D:\BackUP_1\
+          D:\BackUP_2\
+          D:\BackUP_3\
+
+[Mail]
+; Адрес SMTP-сервера
+Server = smtp.company.local
+; Порт SMTP (обычно 25 или 587)
+Port = 25
+; Использовать аутентификацию SMTP (true/false)
+Auth = false
+; Имя пользователя SMTP (если Auth = true)
+Username =
+; Пароль SMTP (если Auth = true)
+Password =
+; Отображаемое имя отправителя
+SenderName = Archive Cleaner Service
+; Адрес отправителя
+SenderEmail = archive@company.local
+; Получатели через запятую
+Recipients = admin@company.local
+; Путь к файлу шаблона письма (HTML)
+TemplatePath = report_template.html
